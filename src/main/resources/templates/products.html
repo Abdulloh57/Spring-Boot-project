@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f6f9;
+        }
+
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background: #212529;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 6px;
+        }
+
+        .sidebar a:hover {
+            background: #343a40;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+        }
+
+        .btn-rounded {
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="d-flex">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar p-3">
+        <h4 class="text-white mb-4">Admin Panel</h4>
+
+        <a th:href="@{/admin/home}">Users</a>
+        <a th:href="@{/admin/products}">Products</a>
+        <a th:href="@{/admin/orders}">Orders</a>
+    </div>
+
+    <!-- MAIN -->
+    <div class="flex-grow-1">
+
+        <!-- TOP NAV -->
+        <nav class="navbar bg-white shadow-sm px-4">
+            <span class="fw-bold">Dashboard</span>
+
+            <div>
+                <span class="me-3 fw-semibold" th:text="${admin.username}">Admin</span>
+
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button class="btn btn-danger btn-sm">Logout</button>
+                </form>
+            </div>
+        </nav>
+
+        <div class="container-fluid p-4">
+
+            <!-- CATEGORIES -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+
+                    <h5 class="mb-3">Top Categories</h5>
+
+                    <div id="topCategories" class="d-flex gap-2 flex-wrap"></div>
+
+                </div>
+            </div>
+
+            <!-- CATEGORIES CARD -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <!-- LEFT: SUB CATEGORIES -->
+                        <div class="col-md-7 border-end">
+
+                            <h5 id="pcategoryName" class="mb-3">
+                                Sub Categories
+                            </h5>
+
+                            <div id="innercategories"
+                                 class="d-flex gap-2 flex-wrap">
+                            </div>
+
+                            <button class="btn btn-primary btn-rounded"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#productModal">
+                                + Add Product
+                            </button>
+
+                        </div>
+
+                        <!-- RIGHT: ADD CATEGORY -->
+                        <div class="col-md-5">
+
+                            <h5 class="mb-3">Add Category</h5>
+
+                            <form th:action="@{/category}"
+                                  th:object="${category}"
+                                  method="post">
+
+                                <input type="text"
+                                       class="form-control mb-3"
+                                       placeholder="Category name"
+                                       th:field="*{name}"
+                                       required>
+
+                                <select class="form-select mb-3"
+                                        th:field="*{parentId}">
+
+                                    <option value="">
+                                        Top Category
+                                    </option>
+
+                                    <option th:each="cat : ${topCategories}"
+                                            th:value="${cat.id}"
+                                            th:text="${cat.name}">
+                                    </option>
+
+                                </select>
+
+                                <button class="btn btn-primary w-100">
+                                    Add Category
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- PRODUCTS -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <h5 class="mb-3">Products</h5>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Qty</th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="products"></tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal fade" id="productModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5>Add Product</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form th:action="@{/product}" method="post" enctype="multipart/form-data">
+
+                    <input class="form-control mb-2" name="name" placeholder="Product name">
+                    <input class="form-control mb-2" name="price" type="number" placeholder="Price">
+                    <input class="form-control mb-2" name="quantity" type="number" placeholder="Quantity">
+                    <input class="form-control mb-2" type="file" name="file">
+
+                    <select id="productCategory" name="categoryId" class="form-select mb-3"></select>
+
+                    <button class="btn btn-success w-100">Save</button>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- JS -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        topCategories();
+    });
+
+    function topCategories() {
+        fetch("/category")
+            .then(r => r.json())
+            .then(renderTopCategories);
+    }
+
+    function renderTopCategories(data) {
+        const el = document.getElementById("topCategories");
+
+        el.innerHTML = data.map(c =>
+            `<button class="btn btn-outline-primary btn-sm"
+            onclick="innerCategories(${c.id}, '${c.name}')">
+            ${c.name}
+        </button>`
+        ).join("");
+    }
+
+    function innerCategories(id, name) {
+        document.getElementById("pcategoryName").innerText = name;
+
+        fetch("/category/" + id)
+            .then(r => r.json())
+            .then(renderInnerCategories);
+    }
+
+    function renderInnerCategories(data) {
+
+        document.getElementById("innercategories").innerHTML =
+            data.map(c =>
+                `<button class="btn btn-secondary btn-sm"
+                onclick="products(${c.id})">
+                ${c.name}
+            </button>`
+            ).join("");
+
+        document.getElementById("productCategory").innerHTML =
+            `<option value="">Select</option>` +
+            data.map(c =>
+                `<option value="${c.id}">${c.name}</option>`
+            ).join("");
+    }
+
+    function products(categoryId) {
+        fetch("/product/" + categoryId)
+            .then(r => r.json())
+            .then(renderProducts);
+    }
+
+    function renderProducts(data) {
+        document.getElementById("products").innerHTML =
+            data.map(p => `
+        <tr>
+            <td>${p.id}</td>
+            <td>
+                <img src="/images/${p.imageUrl || 'no-image.png'}"
+                     width="50" height="50"
+                     style="object-fit:cover;border-radius:8px;">
+            </td>
+            <td>${p.name}</td>
+            <td>${p.price}</td>
+            <td>${p.quantity}</td>
+        </tr>
+    `).join("");
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

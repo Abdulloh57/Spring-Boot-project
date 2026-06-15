@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+        body{
+            overflow-x:hidden;
+        }
+
+        .sidebar{
+            min-height:100vh;
+            width:250px;
+        }
+
+        .sidebar a{
+            color:white;
+            text-decoration:none;
+            padding:12px;
+            display:block;
+            border-radius:8px;
+            margin-bottom:10px;
+        }
+
+        .sidebar a:hover{
+            background-color:#495057;
+        }
+
+        .main-content{
+            width:100%;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="d-flex">
+
+    <!-- Sidebar -->
+    <div class="sidebar bg-dark p-3">
+
+        <h3 class="text-white mb-4">
+            Admin Panel
+        </h3>
+
+        <a th:href="@{/admin/users}">
+            Users
+        </a>
+
+        <a th:href="@{/admin/products}">
+            Products
+        </a>
+
+        <a th:href="@{/admin/orders}">
+            Orders
+        </a>
+
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-light bg-light shadow-sm px-4">
+
+            <div class="ms-auto d-flex align-items-center gap-3">
+
+                <span class="fw-bold"
+                      th:text="${admin.username}">
+                    Username
+                </span>
+
+                <form th:action="@{/logout}" method="post">
+                    <button class="btn btn-danger">
+                        Logout
+                    </button>
+                </form>
+
+            </div>
+
+        </nav>
+
+        <!-- Content -->
+        <div class="container mt-4">
+
+            <div class="card shadow">
+
+                <div class="card-body">
+
+                    <h2>
+                        Welcome,
+                        <span th:text="${admin.username}">
+                            Admin
+                        </span>
+                    </h2>
+
+                    <hr>
+
+
+                    <table class="table">
+                        <thead class="table-dark">
+                        <tr>
+                            <td>Id</td>
+                            <td>Chat Id</td>
+                            <td>Tg Id</td>
+                            <td>Firstname</td>
+                            <td>Phone Number</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="user : ${users}">
+                            <td th:text="${user.id}"></td>
+                            <td th:text="${user.chatId}"></td>
+                            <td th:text="${user.tgId}"></td>
+                            <td th:text="${user.firstname}"></td>
+                            <td th:text="${user.phoneNumber}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
