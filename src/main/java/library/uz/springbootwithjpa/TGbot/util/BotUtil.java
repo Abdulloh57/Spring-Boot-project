@@ -2,7 +2,7 @@ package library.uz.springbootwithjpa.TGbot.util;
 
 import library.uz.springbootwithjpa.model.Category;
 import library.uz.springbootwithjpa.model.Product;
-import library.uz.springbootwithjpa.model.dto.CartItemDto;
+import library.uz.springbootwithjpa.dto.response.CartItemDto;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;

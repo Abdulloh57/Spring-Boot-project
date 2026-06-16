@@ -1,8 +1,8 @@
 package library.uz.springbootwithjpa.controller;
 
 import library.uz.springbootwithjpa.model.Order;
-import library.uz.springbootwithjpa.model.dto.OrderItemDto;
-import library.uz.springbootwithjpa.model.dto.OrderStatusDto;
+import library.uz.springbootwithjpa.dto.response.OrderItemDto;
+import library.uz.springbootwithjpa.dto.request.OrderStatusDto;
 import library.uz.springbootwithjpa.service.OrderServise;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

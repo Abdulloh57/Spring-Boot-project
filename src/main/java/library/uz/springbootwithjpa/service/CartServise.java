@@ -6,8 +6,8 @@ import library.uz.springbootwithjpa.dao.CartRepository;
 import library.uz.springbootwithjpa.exception.RecordNotFoundException;
 import library.uz.springbootwithjpa.model.Cart;
 import library.uz.springbootwithjpa.model.CartItem;
-import library.uz.springbootwithjpa.model.CartStatus;
-import library.uz.springbootwithjpa.model.dto.CartItemDto;
+import library.uz.springbootwithjpa.model.enums.CartStatus;
+import library.uz.springbootwithjpa.dto.response.CartItemDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

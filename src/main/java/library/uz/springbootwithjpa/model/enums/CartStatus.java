@@ -1,4 +1,4 @@
-package library.uz.springbootwithjpa.model;
+package library.uz.springbootwithjpa.model.enums;
 
 public enum CartStatus {
     ACTIVE,

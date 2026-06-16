@@ -1,4 +1,5 @@
-package library.uz.springbootwithjpa.model.dto;
+package library.uz.springbootwithjpa.dto.response;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class OrderItemCreateDto {
+public class OrderItemDto {
+
     private int productId;
+    private String productName;
+    private double price;
     private int quantity;
-    private int productQuantity;
 }

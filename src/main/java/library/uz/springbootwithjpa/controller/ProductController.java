@@ -2,7 +2,7 @@ package library.uz.springbootwithjpa.controller;
 
 
 import library.uz.springbootwithjpa.model.Product;
-import library.uz.springbootwithjpa.model.dto.ProductCreateDto;
+import library.uz.springbootwithjpa.dto.request.ProductCreateDto;
 import library.uz.springbootwithjpa.service.FileServise;
 import library.uz.springbootwithjpa.service.ProductServise;
 import lombok.RequiredArgsConstructor;

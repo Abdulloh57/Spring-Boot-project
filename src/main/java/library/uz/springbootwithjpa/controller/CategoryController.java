@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpSession;
 
 import library.uz.springbootwithjpa.model.Admin;
 import library.uz.springbootwithjpa.model.Category;
-import library.uz.springbootwithjpa.model.dto.CategoryCreateDto;
+import library.uz.springbootwithjpa.dto.request.CategoryCreateDto;
 import library.uz.springbootwithjpa.service.CategoryServise;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

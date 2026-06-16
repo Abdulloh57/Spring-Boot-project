@@ -2,7 +2,7 @@ package library.uz.springbootwithjpa.controller;
 
 import jakarta.servlet.http.HttpSession;
 
-import library.uz.springbootwithjpa.model.dto.AdminLoginDto;
+import library.uz.springbootwithjpa.dto.request.AdminLoginDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

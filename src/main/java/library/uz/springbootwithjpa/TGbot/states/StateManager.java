@@ -2,7 +2,6 @@ package library.uz.springbootwithjpa.TGbot.states;
 
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 @Service /// nega buni qilmadima axir boshqaruvni springga topshirish kerakku
 public class StateManager {
@@ -10,7 +9,7 @@ public class StateManager {
 
     public void updateState(Long chatId,UserState state, int id){
         UserDataState userDataState = chatIdToUserState.get(chatId);
-        /// Bu joyida race condition muammosini atomar darajada boshqarish kerak ekan bo'lmasa hatolik bo'ladi
+        // Bu joyida race condition muammosini atomar darajada boshqarish kerak ekan bo'lmasa hatolik bo'ladi
         userDataState.setUserState(state);
         userDataState.setCurrentRecordId(id);
     }

@@ -1,4 +1,4 @@
-package library.uz.springbootwithjpa.model.dto;
+package library.uz.springbootwithjpa.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

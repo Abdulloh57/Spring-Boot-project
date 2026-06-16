@@ -1,11 +1,12 @@
 package library.uz.springbootwithjpa.controller;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import library.uz.springbootwithjpa.model.Admin;
 import library.uz.springbootwithjpa.model.User;
-import library.uz.springbootwithjpa.model.dto.AdminLoginDto;
-import library.uz.springbootwithjpa.model.dto.CategoryCreateDto;
-import library.uz.springbootwithjpa.service.AdminServise;
+import library.uz.springbootwithjpa.dto.request.AdminLoginDto;
+import library.uz.springbootwithjpa.dto.request.CategoryCreateDto;
+import library.uz.springbootwithjpa.service.impl.AdminServiceImpl;
 import library.uz.springbootwithjpa.service.CategoryServise;
 import library.uz.springbootwithjpa.service.UserServise;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ import java.util.List;
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminController {
-    private final AdminServise adminServise;
+    private final AdminServiceImpl adminService;
     private final CategoryServise categoryServise;
     private final UserServise userServise;
 
@@ -43,7 +44,7 @@ public class AdminController {
 
     @PostMapping("/login")
     public String login(@ModelAttribute AdminLoginDto request, HttpSession session, Model model){
-        Admin admin = adminServise.login(request);
+        Admin admin = adminService.login(request);
         if (admin !=null){
             session.setAttribute("admin", admin);
             return "redirect:/admin/home";
@@ -98,9 +99,9 @@ public class AdminController {
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute AdminLoginDto req,Model model){
+    public String register(@Valid @ModelAttribute AdminLoginDto req, Model model){
         System.out.println(req);
-        adminServise.register(req);
+        adminService.register(req);
         model.addAttribute("admin" , new AdminLoginDto(null , null));
         return "login";
     }

@@ -7,7 +7,7 @@ import library.uz.springbootwithjpa.dao.ProductRepository;
 import library.uz.springbootwithjpa.model.Category;
 import library.uz.springbootwithjpa.model.OrderItem;
 import library.uz.springbootwithjpa.model.Product;
-import library.uz.springbootwithjpa.model.dto.ProductCreateDto;
+import library.uz.springbootwithjpa.dto.request.ProductCreateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

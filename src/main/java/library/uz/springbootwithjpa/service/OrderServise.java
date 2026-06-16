@@ -6,8 +6,10 @@ import library.uz.springbootwithjpa.dao.OrderItemRepository;
 import library.uz.springbootwithjpa.dao.OrderRepository;
 import library.uz.springbootwithjpa.exception.RecordNotFoundException;
 import library.uz.springbootwithjpa.model.*;
-import library.uz.springbootwithjpa.model.dto.CartItemDto;
-import library.uz.springbootwithjpa.model.dto.OrderItemDto;
+import library.uz.springbootwithjpa.dto.response.CartItemDto;
+import library.uz.springbootwithjpa.dto.response.OrderItemDto;
+import library.uz.springbootwithjpa.model.enums.CartStatus;
+import library.uz.springbootwithjpa.model.enums.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

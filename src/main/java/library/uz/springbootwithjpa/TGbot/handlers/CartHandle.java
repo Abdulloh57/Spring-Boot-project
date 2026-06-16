@@ -4,7 +4,7 @@ import library.uz.springbootwithjpa.TGbot.sender.TelegramSender;
 import library.uz.springbootwithjpa.TGbot.states.StateManager;
 import library.uz.springbootwithjpa.TGbot.states.UserState;
 import library.uz.springbootwithjpa.TGbot.util.BotUtil;
-import library.uz.springbootwithjpa.model.dto.CartItemDto;
+import library.uz.springbootwithjpa.dto.response.CartItemDto;
 import library.uz.springbootwithjpa.service.CartServise;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

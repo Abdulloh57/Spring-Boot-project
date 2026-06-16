@@ -8,7 +8,7 @@ import library.uz.springbootwithjpa.TGbot.states.UserState;
 import library.uz.springbootwithjpa.model.Cart;
 import library.uz.springbootwithjpa.model.CartItem;
 import library.uz.springbootwithjpa.model.Order;
-import library.uz.springbootwithjpa.model.dto.CartItemDto;
+import library.uz.springbootwithjpa.dto.response.CartItemDto;
 import library.uz.springbootwithjpa.service.CartServise;
 import library.uz.springbootwithjpa.service.CategoryServise;
 import library.uz.springbootwithjpa.service.OrderServise;
