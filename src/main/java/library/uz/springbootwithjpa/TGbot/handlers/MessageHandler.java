@@ -5,12 +5,13 @@ import library.uz.springbootwithjpa.TGbot.sender.TelegramSender;
 import library.uz.springbootwithjpa.TGbot.states.StateManager;
 import library.uz.springbootwithjpa.TGbot.states.UserDataState;
 import library.uz.springbootwithjpa.TGbot.states.UserState;
+import library.uz.springbootwithjpa.dto.response.OrderResponceDto;
 import library.uz.springbootwithjpa.model.Cart;
 import library.uz.springbootwithjpa.model.CartItem;
 import library.uz.springbootwithjpa.model.Order;
 import library.uz.springbootwithjpa.dto.response.CartItemDto;
 import library.uz.springbootwithjpa.service.CartServise;
-import library.uz.springbootwithjpa.service.CategoryServise;
+import library.uz.springbootwithjpa.service.CategoryService;
 import library.uz.springbootwithjpa.service.OrderServise;
 import library.uz.springbootwithjpa.service.UserServise;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class MessageHandler {
     private final UserServise userServise;
     private final StateManager stateManager;
     private final TelegramSender telegramSender;
-    private final CategoryServise categoryServise;
+    private final CategoryService categoryServise;
     private final CartServise cartServise;
     private final OrderServise orderServise;
     public SendMessage handleMessage(Message message){
@@ -41,7 +42,7 @@ public class MessageHandler {
             userServise.firstRegistration(chatId);
             return telegramSender.makeSendMessage(chatId,"Welcome",null);
         }else if (userDataState.getUserState().equals(UserState.START)){
-            return telegramSender.makeSendMessage(chatId, "Top categories", BotUtil.ctg(
+            return telegramSender.makeSendMessage(chatId, "Top categories", BotUtil.cfg(
                     categoryServise.getTopcategories(), 4
             ));
         }
@@ -65,23 +66,23 @@ public class MessageHandler {
 
         if (text.equals("/start")){
             stateManager.updateState(chatId,UserState.START ,0);
-            return telegramSender.makeSendMessage(chatId,"Top categories",BotUtil.ctg(
+            return telegramSender.makeSendMessage(chatId,"Top categories",BotUtil.cfg(
                     categoryServise.getTopcategories(),4
             ));
         }
-        return telegramSender.makeSendMessage(chatId, "Top categories", BotUtil.ctg(
+        return telegramSender.makeSendMessage(chatId, "Top categories", BotUtil.cfg(
                 categoryServise.getTopcategories(), 4
         ));
     }
 
     private SendMessage showOrders(Long chatId) {
-        List<Order> orders = orderServise.getOrdersByChatId(chatId);
+        List<OrderResponceDto> orders = orderServise.getOrdersByChatId(chatId);
 
         StringBuilder result = new StringBuilder();
-        for (Order order : orders){
+        for (OrderResponceDto order : orders){
             result.append("\n orderId: ").append(order.getId())
                     .append("\ntotal price: ").append(order.getTotalPrice())
-                    .append("\norder status: ").append(order.getStatus())
+                    .append("\norder status: ").append(order.getOrderStatus())
                     .append("\norder created: ").append(order.getCreateAt()).append("\n");
         }
         return telegramSender.makeSendMessage(chatId, result.toString(),null);

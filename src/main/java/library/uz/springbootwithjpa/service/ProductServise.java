@@ -4,6 +4,8 @@ package library.uz.springbootwithjpa.service;
 import jakarta.transaction.Transactional;
 import library.uz.springbootwithjpa.dao.OrderItemRepository;
 import library.uz.springbootwithjpa.dao.ProductRepository;
+import library.uz.springbootwithjpa.dto.response.ProductResponseDto;
+import library.uz.springbootwithjpa.exception.RecordNotFoundException;
 import library.uz.springbootwithjpa.model.Category;
 import library.uz.springbootwithjpa.model.OrderItem;
 import library.uz.springbootwithjpa.model.Product;
@@ -18,10 +20,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductServise {
     private final ProductRepository productRepository;
-    private final CategoryServise categoryServise;
+    private final CategoryService categoryServise;
     private final OrderItemRepository orderItemRepository;
 
-    public void addProduct(ProductCreateDto req , String imageUrl){
+    public ProductResponseDto addProduct(ProductCreateDto req , String imageUrl){
         Product product = new Product();
         product.setName(req.name());
         product.setImageUrl(imageUrl);
@@ -30,19 +32,22 @@ public class ProductServise {
         Category byId = categoryServise.getById(req.categoryId());
         if (byId != null){
         product.setCategory(byId);
-        }else return;
+        }else throw new RecordNotFoundException("Category not found", req.categoryId());
         productRepository.save(product);
+        return mapProduct(product);
     }
 
-    public List<Product> getProducts(int id) {
+    public List<ProductResponseDto> getProducts(int id) {
         Category category = categoryServise.getById(id);
         if (category == null) return null;
-        return productRepository.findByCategory(category);
+        return productRepository.findByCategory(category)
+                .stream()
+                .map(this::mapProduct).toList();
     }
 
-    public Product getProduct(int id) {
+    public ProductResponseDto getProduct(int id) {
         Optional<Product> product = productRepository.findById(id);
-        return product.orElse(null);
+        return product.map(this::mapProduct).orElseThrow(() -> new RecordNotFoundException("Product found",id));
     }
 
 
@@ -57,6 +62,15 @@ public class ProductServise {
             else
                 product.setQuantity(product.getQuantity() + item.getQuantity());
         }
+    }
+
+    public ProductResponseDto mapProduct(Product product){
+        return new ProductResponseDto(product.getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getQuantity(),
+                product.getImageUrl(),
+                product.getCategory().getId());
     }
 
 

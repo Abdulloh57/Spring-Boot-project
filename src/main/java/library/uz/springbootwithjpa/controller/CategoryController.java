@@ -1,54 +1,35 @@
 package library.uz.springbootwithjpa.controller;
 
-import jakarta.servlet.http.HttpSession;
-
-import library.uz.springbootwithjpa.model.Admin;
-import library.uz.springbootwithjpa.model.Category;
 import library.uz.springbootwithjpa.dto.request.CategoryCreateDto;
-import library.uz.springbootwithjpa.service.CategoryServise;
+import library.uz.springbootwithjpa.dto.response.CategoryResponceDto;
+import library.uz.springbootwithjpa.service.CategoryService;
+import library.uz.springbootwithjpa.service.ProductServise;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
-@RequestMapping("/category")
+@RestController
+@RequestMapping("/admin/categories")
 @RequiredArgsConstructor
 public class CategoryController {
-    private final CategoryServise servise;
+    private final CategoryService categoryServise;
+    private final ProductServise productServise;
 
-    @PostMapping
-    public String addCategory(@ModelAttribute CategoryCreateDto request , Model model , HttpSession session){
-        Admin admin = (Admin) session.getAttribute("admin");
-        model.addAttribute("admin" ,admin);
-
-        if (request.parentId() == null) {
-            servise.addTopCategory(request.name());
-
-        }else  servise.addCategory(request.name(), request.parentId());
-
-        model.addAttribute("topCategories",servise.getTopcategories());
-        model.addAttribute(
-                "category",
-                new CategoryCreateDto(null,null)
-        );
-        return "products";
-
-    }
     @GetMapping
-    @ResponseBody
-    public List<Category> getInnerCategories(){
-        return servise.getTopcategories();
+    public List<CategoryResponceDto> getTopCategories(){
+        return categoryServise.getTopcategories();
     }
 
-    @GetMapping("{parentId}")
-    @ResponseBody
-    public List<Category> getInnerCategories(@PathVariable("parentId") int parentId){
-        return servise.getInnerCategories(parentId);
+    @GetMapping("/{id}")
+    public List<CategoryResponceDto> getInnerCategories(@PathVariable int id){
+        return categoryServise.getInnerCategories(id);
     }
-
-
-
+    @PostMapping
+    public CategoryResponceDto create(@RequestBody CategoryCreateDto req){
+        if (req.parentId() == null){
+            return categoryServise.addTopCategory(req.name());
+        }
+        return categoryServise.addCategory(req);
+    }
 }

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Optional;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -23,4 +25,10 @@ public class CartItem {
     @JoinColumn(name = "cart_id")
     private Cart cart;
     private int quantity;
+
+    public CartItem(Product product, Cart cart, int quantity) {
+        this.product = product;
+        this.cart = cart;
+        this.quantity = quantity;
+    }
 }

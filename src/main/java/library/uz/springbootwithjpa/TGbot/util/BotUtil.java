@@ -1,8 +1,10 @@
 package library.uz.springbootwithjpa.TGbot.util;
 
-import library.uz.springbootwithjpa.model.Category;
+import library.uz.springbootwithjpa.dto.response.CategoryResponceDto;
+import library.uz.springbootwithjpa.dto.response.ProductResponseDto;
 import library.uz.springbootwithjpa.model.Product;
 import library.uz.springbootwithjpa.dto.response.CartItemDto;
+import org.jspecify.annotations.NonNull;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BotUtil {
-    public static<T> InlineKeyboardMarkup ctg(List<T> btns,int colCount){
+    public static<T> InlineKeyboardMarkup cfg(List<T> btns, int colCount){
         InlineKeyboardMarkup inlineKeyboardMarkup
                 = new InlineKeyboardMarkup();
 
@@ -23,16 +25,7 @@ public class BotUtil {
         List<InlineKeyboardButton> row = new ArrayList<>();
         int count = 0;
         for (T btn : btns) {
-            InlineKeyboardButton button;
-            if (btn instanceof Category category) {
-                button = new InlineKeyboardButton(category.getName());
-                button.setCallbackData(""+ category.getId());
-            }else if (btn instanceof Product product) {
-                button = new InlineKeyboardButton(product.getName());
-                button.setCallbackData(""+product.getId());
-            }else {
-                throw new UnsupportedOperationException("");
-            }
+            InlineKeyboardButton button = getInlineKeyboardButton(btn);
             count++;
             row.add(button);
             if (count % colCount == 0) {
@@ -45,6 +38,20 @@ public class BotUtil {
         }
 
         return inlineKeyboardMarkup;
+    }
+
+    private static <T> @NonNull InlineKeyboardButton getInlineKeyboardButton(T btn) {
+        InlineKeyboardButton button;
+        if (btn instanceof CategoryResponceDto category) {
+            button = new InlineKeyboardButton(category.getName());
+            button.setCallbackData(""+ category.getId());
+        }else if (btn instanceof ProductResponseDto product) {
+            button = new InlineKeyboardButton(product.getName());
+            button.setCallbackData(""+product.getId());
+        }else {
+            throw new UnsupportedOperationException("");
+        }
+        return button;
     }
 
     public static List<InlineKeyboardButton> getRow(String[][] btns){

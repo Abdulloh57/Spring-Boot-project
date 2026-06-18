@@ -25,4 +25,8 @@ public interface CartItemRepository extends JpaRepository<CartItem, Integer> {
             where c.cart = :cart
             """)
     List<CartItemDto> getCartItemByCart(@Param("cart") Cart cart);
+
+    CartItem findByCart_IdAndProduct_Id(int cartId, int productId);
+
+    int countCartItemByCart_Id(int cartId);
 }

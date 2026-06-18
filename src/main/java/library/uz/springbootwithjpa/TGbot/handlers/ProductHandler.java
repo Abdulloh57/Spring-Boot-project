@@ -6,10 +6,11 @@ import library.uz.springbootwithjpa.TGbot.states.StateManager;
 import library.uz.springbootwithjpa.TGbot.states.UserState;
 import library.uz.springbootwithjpa.TGbot.util.BotUtil;
 import library.uz.springbootwithjpa.TGbot.util.InlineKeyboardFactory;
-import library.uz.springbootwithjpa.exception.RecordNotFoundException;
+import library.uz.springbootwithjpa.dto.request.CartItemRequest;
+import library.uz.springbootwithjpa.dto.response.CartItemResponse;
+import library.uz.springbootwithjpa.dto.response.ProductResponseDto;
 import library.uz.springbootwithjpa.model.Cart;
 import library.uz.springbootwithjpa.model.CartItem;
-import library.uz.springbootwithjpa.model.Product;
 import library.uz.springbootwithjpa.service.CartServise;
 import library.uz.springbootwithjpa.service.ProductServise;
 import lombok.RequiredArgsConstructor;
@@ -35,10 +36,7 @@ public class ProductHandler {
     public SendPhoto sendProduct(Long chatId , String callbackdata){
         final String BASE_PATH ="C:/Users/Abdulloh/Desktop/spring-boot-with-jpa/images/";
         int id = Integer.parseInt(callbackdata);
-        Product product = productServise.getProduct(id);
-        if (product == null){
-            throw new RecordNotFoundException("Product not found", id);
-        }
+        ProductResponseDto product = productServise.getProduct(id);
         int qty = stateManager.getState(chatId).getQuantity();
         qty = qty != 0 ? qty : 1;
         InlineKeyboardMarkup inlineKeyboardMarkup = InlineKeyboardFactory.makeProduct(product, qty);
@@ -60,7 +58,7 @@ public class ProductHandler {
 
     public InlineKeyboardMarkup handlerincrement(Long chatId, String callbackdata, boolean inc){
         int productId = Integer.parseInt(callbackdata.substring(3));
-        Product product = productServise.getProduct(productId);
+        ProductResponseDto product = productServise.getProduct(productId);
         InlineKeyboardMarkup inlineKeyboardMarkup = null;
         int quantity = stateManager.getState(chatId).getQuantity();
         if (inc){
@@ -76,45 +74,29 @@ public class ProductHandler {
     @Transactional
     public SendMessage handleAddCart(Long chatId, String callbackdata){
         int productId = Integer.parseInt(callbackdata.substring(3));
-        Product product = productServise.getProduct(productId);
         int quantity = stateManager.getState(chatId).getQuantity();
         Cart cart = cartServise.getCartByChatId(chatId);
         if (cart == null) {
            cart = cartServise.createCart(chatId);
         }
-        if (product.getQuantity() < quantity){
-            return telegramSender.makeSendMessage(chatId, "ProductSoni yetmaydi", null);
+        CartItemRequest cartItemRequest = new CartItemRequest(productId, cart.getId(), quantity);
+        CartItemResponse cartItemResponse = cartServise.addCartItem(cartItemRequest);
+        int cartSize =  cartServise.cartSize(cart.getId());
+        if (cartItemResponse == null){
+            return telegramSender
+                    .makeSendMessage(chatId,
+                            "Product soni yetmaydi",
+                            BotUtil.createReplyKeyboardMarkup(new String[]{"Orders","Cart ("+cartSize+")"},2));
         }
-        List<CartItem> cartItems = cartServise.getCartItemsByCartId(cart.getId());
-        for (CartItem item : cartItems){
-            if (item.getProduct().getId() == productId){
-                item.setQuantity(item.getQuantity()+ quantity);
-                cartServise.addCartItem(item);
-                if (product.getQuantity() < item.getQuantity()+quantity){
-                    return telegramSender.makeSendMessage(chatId, "ProductSoni yetmaydi", null);
-                }else{
-                    stateManager.getState(chatId).setQuantity(1);
-                    return telegramSender.makeSendMessage(chatId,"Savatga qo'shildi", BotUtil.createReplyKeyboardMarkup(new String[]{"Orders","Cart ("+cartItems.size()+")"},2));
-
-                }
-            }
-        }
-        CartItem cartItem  =CartItem.builder().cart(cart).product(product).build();
-        cartServise.addCartItem(cartItem);
         stateManager.getState(chatId).setQuantity(1);
-        return telegramSender.makeSendMessage(chatId,"Savatga qo'shildi", BotUtil.createReplyKeyboardMarkup(new String[]{"Orders","Cart ("+cartItems.size()+")"},2));
+        return telegramSender.makeSendMessage(chatId,"Savatga qo'shildi", BotUtil.createReplyKeyboardMarkup(new String[]{"Orders","Cart ("+cartSize+")"},2));
     }
     @Transactional
     public SendMessage backToProduts(Long chatId, String callbackdata) {
         int productId = Integer.parseInt(callbackdata.substring(3));
-        Product product = productServise.getProduct(productId);
-        List<Product> products = productServise.getProducts(product.getCategory().getId());
-        if (products.isEmpty()) {
-            return telegramSender.makeSendMessage(chatId,"There is no products" , null);
-        }
-        else {
-            stateManager.updateState(chatId , UserState.SHOW_PRODUCTS,product.getCategory().getId());
-            return telegramSender.makeSendMessage(chatId,"Products" ,BotUtil.ctg(products,4));
-        }
+        ProductResponseDto product = productServise.getProduct(productId);
+        List<ProductResponseDto> products = productServise.getProducts(product.getCategoryId());
+        stateManager.updateState(chatId , UserState.SHOW_PRODUCTS,product.getCategoryId());
+        return telegramSender.makeSendMessage(chatId,"Products" ,BotUtil.cfg(products,4));
     }
 }
