@@ -12,14 +12,17 @@ import library.uz.springbootwithjpa.model.Admin;
 import library.uz.springbootwithjpa.dto.request.AdminLoginDto;
 import library.uz.springbootwithjpa.service.AdminService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
     private final AdminRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public AdminResponseDto login(AdminLoginDto request, HttpSession session){
@@ -34,14 +37,14 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public AdminResponseDto register(AdminLoginDto req) {
-        Admin admin = repository.findByUsername(req.username());
-        if (admin !=null){
-            throw new AlreadyExistException("Username already exist with "+req.username());
+        Optional<Admin> admin = repository.findByUsername(req.username());
+        if (admin.isPresent()){
+            throw new AlreadyExistException("admin found with username : "+req.username());
         }
-        admin = new Admin();
-        admin.setUsername(req.username());
-        admin.setPassword(req.password());
-        admin = repository.save(admin);
-        return new AdminResponseDto(admin.getId(), admin.getUsername());
+        Admin adminEntity = new Admin();
+        adminEntity.setUsername(req.username());
+        adminEntity.setPassword(passwordEncoder.encode(req.password()));
+        Admin saved = repository.save(adminEntity);
+        return new AdminResponseDto(saved.getId(), saved.getUsername());
     }
 }

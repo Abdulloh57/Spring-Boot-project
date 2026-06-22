@@ -17,14 +17,14 @@ public class MvcConfig implements WebMvcConfigurer {
                         "C:/Users/Abdulloh/Desktop/spring-boot-with-jpa/images/");
     }
 
-    @Bean
-    public FilterRegistrationBean<AuthFilter> authFilter() {
-        FilterRegistrationBean<AuthFilter> registration = new FilterRegistrationBean<>();
-
-        registration.setFilter(new AuthFilter());
-        registration.addUrlPatterns("/*"); // hamma requestlar
-        registration.setOrder(1); // priority
-
-        return registration;
-    }
+//    @Bean
+//    public FilterRegistrationBean<AuthFilter> authFilter() {
+//        FilterRegistrationBean<AuthFilter> registration = new FilterRegistrationBean<>();
+//
+//        registration.setFilter(new AuthFilter());
+//        registration.addUrlPatterns("/*"); // hamma requestlar
+//        registration.setOrder(1); // priority
+//
+//        return registration;
+//    }
 }

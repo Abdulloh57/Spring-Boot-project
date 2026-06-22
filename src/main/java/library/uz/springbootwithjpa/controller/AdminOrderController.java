@@ -1,10 +1,9 @@
 package library.uz.springbootwithjpa.controller;
 
 import library.uz.springbootwithjpa.dto.request.OrderStatusDto;
+import library.uz.springbootwithjpa.dto.response.OrderItemDto;
 import library.uz.springbootwithjpa.dto.response.OrderResponceDto;
-import library.uz.springbootwithjpa.dto.response.ProductResponseDto;
 import library.uz.springbootwithjpa.service.OrderServise;
-import library.uz.springbootwithjpa.service.ProductServise;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +14,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminOrderController {
     private final OrderServise orderServise;
-    private final ProductServise productServise;
     @GetMapping
     public List<OrderResponceDto> getOrders(){
         return orderServise.getAll();
@@ -27,8 +25,8 @@ public class AdminOrderController {
     }
 
     @GetMapping("/{orderId}/products")
-    public List<ProductResponseDto> getProducts(@PathVariable Integer orderId){
-        return productServise.getProducts(orderId);
+    public List<OrderItemDto> getProducts(@PathVariable Integer orderId){
+        return orderServise.getOrderProducts(orderId);
     }
 
     @PutMapping("/{id}")
